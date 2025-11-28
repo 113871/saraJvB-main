@@ -50,3 +50,82 @@ winget install --id Git.Git -e --source winget
 of
 [Direct van de website
 ](https://git-scm.com/install/windows)
+
+# Forken van de repo
+
+Om je eigen versie van de Sara Robot code te maken, is het handig om de repo te **forken** naar je eigen GitHub account. Dit geeft je de vrijheid om wijzigingen te maken zonder het centrale project te beïnvloeden.
+
+1. Open de repo in je browser: [https://github.com/tommmie20000/saraJvB-main](https://github.com/tommmie20000/saraJvB-main)
+2. Log in op je GitHub account.
+3. Klik rechtsboven op de **Fork** knop.
+4. Selecteer je eigen account als bestemming.
+5. Je hebt nu een kopie van de repo in je eigen GitHub account.
+
+## Je fork lokaal klonen
+
+Na het forken, kan je je eigen fork lokaal werken met:
+
+```bash
+git clone https://github.com/<jouw-gebruikersnaam>/saraJvB-main.git /pad/naar/jouw/folder
+```
+
+Vervang `<jouw-gebruikersnaam>` door je eigen GitHub handle.
+
+## Wijzigingen maken
+
+1. Ga naar de folder van je clone:
+
+```bash
+cd /pad/naar/jouw/folder
+```
+
+2. Maak je wijzigingen in de code.
+3. Voeg de wijzigingen toe:
+
+```bash
+git add .
+```
+
+4. Commit je wijzigingen:
+
+```bash
+git commit -m "Beschrijf je wijzigingen"
+```
+
+5. Push naar je eigen fork:
+
+```bash
+git push origin main
+```
+
+Persoonlijk ben ik meer fan van alles coderen op vscode die gelinked is met vscode, en dan alles pushen via de simpele UI en dan pullen op die pi. dit is vrij simpel en ook handig om te doen. Maar dit ligt compleet aan je eigen voorkeur, dus ik zou zeggen, google away!
+
+# Up-to-date blijven met het centrale project
+
+Om te zorgen dat je fork up-to-date blijft met de originele repo:
+
+1. Voeg de originele repo toe als upstream:
+
+```bash
+git remote add upstream https://github.com/tommmie20000/saraJvB-main.git
+```
+
+2. Haal de laatste wijzigingen op van de centrale repo:
+
+```bash
+git fetch upstream
+```
+
+3. Merge deze wijzigingen in je lokale branch:
+
+```bash
+git merge upstream/main
+```
+
+4. Push de bijgewerkte code naar je eigen fork:
+
+```bash
+git push origin main
+```
+
+Door dit proces te volgen, kan iedereen hun eigen folder hebben, wijzigingen maken, en toch eenvoudig up-to-date blijven met het centrale project.
