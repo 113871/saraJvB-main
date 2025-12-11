@@ -1,0 +1,22 @@
+sudo apt update
+
+sudo apt install git
+
+git clone https://github.com/tommmie20000/saraJvB-main.git
+
+cd saraJvB-main
+
+sudo apt install python3
+
+python3 -m venv venv 
+indien je hierbij een fout krijgt van dat je een package mist, voer de volgende commandos uit:
+
+sudo apt install python3.13-venv
+^^!!LET OP: kijk uit met de versie. dit kan verschillen met de error die je hebt.!!^^
+
+rm -rf venv
+
+(probeer opnieuw)
+python3 -m venv venv
+
+source venv/bin/activate
