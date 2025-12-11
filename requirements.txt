@@ -1,0 +1,9 @@
+numpy
+keyboard
+matplotlib
+flask
+opencv-python
+pygame
+flask-socketio
+eventlet
+pyserial

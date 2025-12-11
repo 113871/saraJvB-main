@@ -20,3 +20,13 @@ rm -rf venv
 python3 -m venv venv
 
 source venv/bin/activate
+
+Installeer de pip packages:
+
+pip install -r requirements.txt
+
+
+
+Voor de camera, moet je iets gebruiken genaamd astraSDK. dit zorgt voor de communicatie met de camera. de setup hiervan is nogal priegelwerk, maar uiteindelijk werkt het wel.
+
+
