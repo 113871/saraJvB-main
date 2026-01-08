@@ -129,3 +129,24 @@ git push origin main
 ```
 
 Door dit proces te volgen, kan iedereen hun eigen folder hebben, wijzigingen maken, en toch eenvoudig up-to-date blijven met het centrale project.
+
+# Remote desktop met de PI
+
+## real VNC server op de PI activeren
+
+realvnc staat standaard geinstaleerd op rasberrypios (het OS op de PI) die moet je alleen nog activeren
+
+    sudo raspi-config
+navigeer naar Interface Options slecteer VNC en druk enter. Selecteer dan yes en click enter.  
+Dan kan je dit scherm sluiten en is realVNC geactiveerd
+
+## realVNC viewer (client side)
+ga naar de realVNC website [www.realvnc.com/en/connect/download/viewer/](www.realvnc.com/en/connect/download/viewer/) daan dowload je de RealVNC viewer .exe  
+DIe kan je openen en dan instaleerd die de viewer.
+
+## Verbinden met de PI 
+Verbind beide de PI en client met de wifi van de tp-link router
+
+Open RealVNC viewer op client (laptop) in de searchbar bovenin typ je `raspberrypi.local` druk enter.  
+Dan krijg je een login scherm. Voer de login van de PI zelf in (die je ook gebruikt op de pi zelf).  
+Wanneer je al eerder hebt verbonden kan je dubbel clicken op de preview die er staat waaronder `raspberrypi.local` staat
