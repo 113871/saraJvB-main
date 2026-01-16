@@ -39,8 +39,8 @@ class BallTracker:
         self.center_y = 240  # Half of 480 (typical height)
         
         # Deadzone to prevent jittering (larger to reduce oscillation)
-        self.deadzone_x = 15
-        self.deadzone_y = 15
+        self.deadzone_x = 8
+        self.deadzone_y = 8
         
         # Movement smoothing
         self.smoothing_factor = 0.3  # How quickly to approach target (0-1, lower = smoother)
@@ -53,9 +53,9 @@ class BallTracker:
 
         # Base follow parameters (use ball size instead of depth)
         self.target_radius = 80  # desired ball radius in pixels when at target distance (increased)
-        self.radius_deadzone = 5  # pixels (narrower deadzone to allow closer movement)
+        self.radius_deadzone = 3  # pixels (narrower deadzone to allow closer movement)
         self.radius_scale = 1.0  # sensitivity multiplier for pixel error -> speed
-        self.max_forward_speed = 30
+        self.max_forward_speed = 50
         self.max_rotation_speed = 20
         self.base_move_enabled = True
         self.last_base_move_time = time.time()
@@ -135,52 +135,10 @@ class BallTracker:
     
     def calculate_head_adjustment(self, ball_x, ball_y):
         """
-        Calculate how much to adjust pan and tilt based on ball position.
-        Updates target position, returns smoothed current position.
+        Head stays in home position. No adjustment needed.
         """
-        if ball_x is None or ball_y is None:
-            # No ball detected, maintain current position
-            return self.current_pan, self.current_tilt
-        
-        # Calculate error (distance from center)
-        error_x = ball_x - self.center_x
-        error_y = ball_y - self.center_y
-        
-        # Apply deadzone
-        if abs(error_x) < self.deadzone_x:
-            error_x = 0
-        if abs(error_y) < self.deadzone_y:
-            error_y = 0
-        
-        # Calculate target adjustments
-        pan_adjustment = error_x * self.pan_kp
-        tilt_adjustment = -error_y * self.tilt_kp
-        
-        # Update target positions
-        self.target_pan = self.current_pan + pan_adjustment
-        self.target_tilt = self.current_tilt + tilt_adjustment
-        
-        # Clamp targets to valid ranges
-        self.target_pan = max(RobotHeadPositions.PAN_LEFT, 
-                             min(RobotHeadPositions.PAN_RIGHT, self.target_pan))
-        self.target_tilt = max(RobotHeadPositions.TILT_DOWN, 
-                              min(RobotHeadPositions.TILT_UP, self.target_tilt))
-        
-        # Smoothly interpolate current position toward target
-        pan_diff = self.target_pan - self.current_pan
-        tilt_diff = self.target_tilt - self.current_tilt
-        
-        # Apply smoothing (exponential moving average)
-        new_pan = self.current_pan + (pan_diff * self.smoothing_factor)
-        new_tilt = self.current_tilt + (tilt_diff * self.smoothing_factor)
-        
-        # Only update if movement is significant enough
-        if abs(new_pan - self.current_pan) < self.min_movement:
-            new_pan = self.current_pan
-        if abs(new_tilt - self.current_tilt) < self.min_movement:
-            new_tilt = self.current_tilt
-        
-        return new_pan, new_tilt
+        # Keep head at center position (no head tracking)
+        return self.current_pan, self.current_tilt
     
     def move_head(self, pan_pos, tilt_pos):
         """Move the robot head to specified pan and tilt positions."""
@@ -190,7 +148,8 @@ class BallTracker:
         self.current_tilt = tilt_pos
 
     def calculate_base_movement(self, ball_x, radius=None, depth_mm=None):
-        """Calculate base movement based on ball size (preferred) or depth (fallback).
+        """Calculate base movement based on ball position and size.
+        Body rotates left/right to face the ball.
         Returns (forward, sideways, rotation).
         """
         if not self.base_move_enabled or ball_x is None:
@@ -198,7 +157,7 @@ class BallTracker:
 
         forward_velocity = 0
 
-        # Prefer radius-based control
+        # Prefer radius-based control for forward movement
         if radius is not None and radius > 0:
             pixel_error = self.target_radius - radius
             if abs(pixel_error) > self.radius_deadzone:
@@ -209,12 +168,11 @@ class BallTracker:
             if abs(distance_error) > self.radius_deadzone * 10:
                 forward_velocity = int(np.clip(distance_error * 0.05, -self.max_forward_speed, self.max_forward_speed))
 
-        # Rotation based on horizontal error
+        # Rotation based on horizontal error - rotate body to face the ball
         horizontal_error = ball_x - self.center_x
         rotation_velocity = 0
         if abs(horizontal_error) > self.deadzone_x * 1.5:
-            # invert sign: positive horizontal_error (ball to right) -> rotate left (negative),
-            # flip if your robot's rotation sign is opposite
+            # Negative horizontal_error (ball to left) -> rotate left (negative)
             rotation_velocity = int(np.clip(-horizontal_error * 0.1, -self.max_rotation_speed, self.max_rotation_speed))
 
         return forward_velocity, 0, rotation_velocity
