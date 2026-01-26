@@ -1,0 +1,20 @@
+import pyttsx3
+import threading
+
+def _speak(text: str):
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
+    engine.stop()
+
+def say(text: str):
+    """Laat Windows de tekst uitspreken (threaded, veilig voor Tkinter)."""
+    if not text.strip():
+        return
+    t = threading.Thread(target=_speak, args=(text,), daemon=True)
+    t.start()
+
+def play(file_path: str):
+    """Speelt een geluidsbestand af via Windows."""
+    import winsound
+    winsound.PlaySound(file_path, winsound.SND_FILENAME)
